@@ -1,9 +1,5 @@
 'use strict';
-// Only load .env in development — in production (Railway), env vars are
-// injected directly and a local .env file must never override them.
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config();
-}
+require('dotenv').config();
 
 // ════════════════════════════════════════════════════════════════
 //  BiltyTrack v3.0 — Production Server
@@ -90,18 +86,10 @@ const app = express();
 if (IS_PROD) app.set('trust proxy', 1);
 
 // ── Helmet ────────────────────────────────────────────────────
+// CSP disabled — was blocking inline onclick buttons (login, save, etc.)
+// Other Helmet security protections still active.
 app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc:  ["'self'"],
-      scriptSrc:   ["'self'", "'unsafe-inline'"],
-      styleSrc:    ["'self'", "'unsafe-inline'",
-                   'fonts.googleapis.com', 'fonts.gstatic.com'],
-      fontSrc:     ["'self'", 'fonts.gstatic.com'],
-      imgSrc:      ["'self'", 'data:', 'blob:'],
-      connectSrc:  ["'self'"]
-    }
-  }
+  contentSecurityPolicy: false
 }));
 
 // ── Body Parsers ──────────────────────────────────────────────
